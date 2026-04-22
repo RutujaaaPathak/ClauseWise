@@ -1,0 +1,13 @@
+# Backend ignores
+backend/__pycache__/
+backend/*.pyc
+backend/venv/
+backend/.env
+backend/uploads/
+
+# Frontend ignores
+ClauseWise-frontend/node_modules/
+ClauseWise-frontend/build/
+
+# General
+*.log
