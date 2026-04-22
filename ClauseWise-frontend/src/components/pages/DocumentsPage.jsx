@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react'; // ✅ ADDED useEffect
 import { Link, useNavigate } from 'react-router-dom';
 import { Plus, BarChart2, Download, Trash2, Search, FileText, ShieldCheck, AlertTriangle, XCircle } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
@@ -28,9 +28,34 @@ function ScoreBar({ score, riskLevel }) {
 
 export default function DocumentsPage() {
   const navigate = useNavigate();
-  const { documents, removeDocument, setAnalysisResult } = useApp();
+  const { removeDocument, setAnalysisResult } = useApp();
+
+  const [documents, setDocuments] = useState([]); // ✅ ADDED
   const [search, setSearch] = useState('');
   const [filterType, setFilterType] = useState('all');
+
+  // ✅ FETCH FROM BACKEND
+  useEffect(() => {
+    fetch("http://localhost:8000/documents")
+      .then(res => res.json())
+      .then(data => {
+        console.log("Backend data:", data);
+
+        // ✅ MAP backend → frontend format
+        const formatted = data.map(d => ({
+          id: d.id,
+          name: d.name,
+          size: "N/A",
+          category: "Legal",
+          scanDate: d.date,
+          type: d.type,
+          safetyScore: d.score,
+          riskLevel: d.risk.toUpperCase() // match UI format
+        }));
+
+        setDocuments(formatted);
+      });
+  }, []);
 
   const filtered = documents.filter(d => {
     const matchSearch = d.name.toLowerCase().includes(search.toLowerCase());
